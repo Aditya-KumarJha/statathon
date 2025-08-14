@@ -116,7 +116,7 @@ GROUP BY sector;`,
 ];
 
 export default function SQL() {
-  //const [apiKey, setApiKey] = useState("sk_live_51J6hP4gF7T3z8R9qW2Lk3Vn");
+  const [apiKey, setApiKey] = useState("sk_live_51J6hP4gF7T3z8R9qW2Lk3Vn");
   const [dataset, setDataset] = useState(sampleSets[0]); // default "All"
   const [sql, setSql] = useState("");
   const [running, setRunning] = useState(false);
