@@ -5,7 +5,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const VALID_API_KEY = "FAKE_API";
+const VALID_API_KEY = "sk_live_51J6hP4gF7T3z8R9qW2Lk3Vn";
 
 const sqlResponses = {
   "SELECT state, ROUND(AVG(unemployment_rate),2) AS unemployment_rate FROM plfs_2023_q4 GROUP BY state ORDER BY unemployment_rate DESC LIMIT 10;": [

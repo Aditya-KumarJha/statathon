@@ -88,7 +88,7 @@ const performanceStats = [
 
 export default function Homepage() {
   const [showModal, setShowModal] = useState(false);
-  const fakeApiKey = "FAKE_API";
+  const fakeApiKey = "sk_live_51J6hP4gF7T3z8R9qW2Lk3Vn";
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
