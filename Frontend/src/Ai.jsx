@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Particles from "react-tsparticles";
 import { Database, ShieldCheck, Lock, Zap, Play, Cpu, Key } from "lucide-react";
+import { Link } from "react-router-dom";
 import Common from "./Common";
 
 const FancyButton = ({ children, icon: Icon, color = "cyan", ...props }) => {
@@ -231,15 +232,16 @@ export default function AI() {
         }}
         className="absolute inset-0 z-0"
       />
-
       <header className="relative z-10 border-b border-white/10 backdrop-blur-md bg-white/5">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link to='/'>
           <div className="flex items-center gap-2">
             <Database className="w-7 h-7 text-cyan-400" />
             <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
               SurveyQuery.ai - AI → SQL
             </h1>
           </div>
+          </Link>
           <div className="flex items-center gap-3">
             <span className="hidden md:flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
               RBAC: Researcher
@@ -250,6 +252,7 @@ export default function AI() {
           </div>
         </div>
       </header>
+      
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-8 space-y-8">
         <section className="grid lg:grid-cols-3 gap-6">
