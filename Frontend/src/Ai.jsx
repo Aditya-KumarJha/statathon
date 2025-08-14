@@ -119,7 +119,7 @@ const templates = [
 ];
 
 export default function AI() {
-  const [apiKey] = useState("sk_live_51J6hP4gF7T3z8R9qW2Lk3Vn");
+  //const [apiKey] = useState("sk_live_51J6hP4gF7T3z8R9qW2Lk3Vn");
   const [model, setModel] = useState(aiModels[0]);
   const [prompt, setPrompt] = useState("");
   const [sql, setSql] = useState("");
