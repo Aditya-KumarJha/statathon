@@ -7,6 +7,8 @@ app.use(express.json());
 
 const VALID_API_KEY = "sk_live_51J6hP4gF7T3z8R9qW2Lk3Vn";
 
+// --- Mock Data Store ---
+
 const sqlResponses = {
   "SELECT state, ROUND(AVG(unemployment_rate),2) AS unemployment_rate FROM plfs_2023_q4 GROUP BY state ORDER BY unemployment_rate DESC LIMIT 10;": [
     { state: "Kerala", unemployment_rate: 9.82 },
@@ -21,7 +23,6 @@ const sqlResponses = {
   ],
 };
 
-// Predefined AI prompts and responses
 const aiResponses = {
   "What was the average literacy rate in West Bengal during the 75th round?": [
     { state: "West Bengal", average_literacy_rate: 76.26 }
@@ -35,15 +36,28 @@ const aiResponses = {
   ],
 };
 
-// SQL Endpoint
-app.post("/v1/query/sql", (req, res) => {
+// New mapping for the nl2sql-preview endpoint
+const nlToSqlMapping = {
+    "What was the average literacy rate in West Bengal during the 75th round?": "SELECT AVG(literacy_rate) AS average_literacy_rate FROM nss_75_education WHERE state = 'West Bengal';",
+    "Show me the top 5 districts in West Bengal by female literacy rate": "SELECT district, female_literacy_rate FROM nss_75_education WHERE state = 'West Bengal' ORDER BY female_literacy_rate DESC LIMIT 5;"
+};
+
+
+// --- API Endpoints ---
+
+// Middleware for API Key Authentication
+const checkApiKey = (req, res, next) => {
   const authHeader = req.headers["x-api-key"] || "";
   const token = authHeader.trim();
 
   if (token !== VALID_API_KEY) {
     return res.status(401).json({ error: "Invalid or missing API key" });
   }
+  next();
+};
 
+// SQL Execution Endpoint
+app.post("/v1/query/sql", checkApiKey, (req, res) => {
   const { sql } = req.body;
   if (!sql) return res.status(400).json({ error: "Missing 'sql' field in request body" });
 
@@ -66,14 +80,8 @@ app.post("/v1/query/sql", (req, res) => {
   });
 });
 
-app.post("/v1/query/ai", (req, res) => {
-  const authHeader = req.headers["x-api-key"] || "";
-  const token = authHeader.trim();
-
-  if (token !== VALID_API_KEY) {
-    return res.status(401).json({ error: "Invalid or missing API key" });
-  }
-
+// AI Query Execution Endpoint
+app.post("/v1/query/ai", checkApiKey, (req, res) => {
   const { query, dataset_id = null, language = "en" } = req.body;
   if (!query) return res.status(400).json({ error: "Missing 'query' field in request body" });
 
@@ -95,6 +103,30 @@ app.post("/v1/query/ai", (req, res) => {
     data
   });
 });
+
+// NEW: Natural Language to SQL Preview Endpoint
+app.post("/nl2sql-preview", checkApiKey, (req, res) => {
+    const { query, dataset_id = null, language = "en" } = req.body;
+    if (!query) return res.status(400).json({ error: "Missing 'query' field in request body" });
+
+    const normalized = query.trim();
+    const proposedSql = nlToSqlMapping[normalized];
+
+    if (!proposedSql) {
+        return res.status(400).json({ error: "Prompt not recognized for SQL generation" });
+    }
+
+    return res.json({
+        sql_proposal: proposedSql,
+        confidence_score: 0.95, // Mock confidence score
+        metadata: {
+            engine: "SurveyQuery-AI-v2",
+            language_detected: language,
+            dataset_inferred: dataset_id || "nss_75_education"
+        }
+    });
+});
+
 
 const PORT = 4000;
 app.listen(PORT, () => {
